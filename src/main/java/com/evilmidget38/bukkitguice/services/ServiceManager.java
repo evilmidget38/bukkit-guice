@@ -28,7 +28,7 @@ public class ServiceManager {
         impls.getServiceImplementations().add(impl);
         for (Map.Entry<Class<? extends Annotation>, Constraint> entry : constraintMap.entrySet()) {
             Annotation annotation = clazz.getAnnotation(entry.getKey());
-            if (!entry.getValue().apply(annotation)) {
+            if (annotation != null && !entry.getValue().apply(annotation)) {
                 passed = false;
                 break;
             }
