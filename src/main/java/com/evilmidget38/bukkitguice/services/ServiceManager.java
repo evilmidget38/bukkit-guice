@@ -1,8 +1,10 @@
 package com.evilmidget38.bukkitguice.services;
 
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.lang.annotation.Annotation;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -24,15 +26,21 @@ public class ServiceManager {
             impls = new ServiceImplementations();
             services.put(service, impls);
         }
-        ServiceImplementation impl = new ServiceImplementation(service, clazz);
+        ServiceImplementation impl = new ServiceImplementation(clazz);
         impls.getServiceImplementations().add(impl);
+        int appliedConstraints = 0;
         for (Map.Entry<Class<? extends Annotation>, Constraint> entry : constraintMap.entrySet()) {
             Annotation annotation = clazz.getAnnotation(entry.getKey());
-            if (annotation != null && !entry.getValue().apply(annotation)) {
-                passed = false;
-                break;
+            if (annotation != null) {
+                if (entry.getValue().apply(annotation)) {
+                    appliedConstraints++;
+                } else {
+                    passed = false;
+                    break;
+                }
             }
         }
+        impl.setAppliedConstraints(appliedConstraints);
         if (passed) {
             impls.getValidImplementations().add(impl);
         }
@@ -65,7 +73,8 @@ public class ServiceManager {
         System.out.println(services);
         Map<Class<?>, Class<?>> bindings = Maps.newHashMap();
         for (Map.Entry<Class<?>, ServiceImplementations> entry : services.entrySet()) {
-            bindings.put(entry.getKey(), entry.getValue().getValidImplementations().iterator().next().getType());
+            ServiceImplementation implementation = ImmutableSortedSet.copyOf(new ServiceImplementationComparator(), entry.getValue().getValidImplementations()).first();
+            bindings.put(entry.getKey(), implementation.getType());
         }
         return bindings;
     }
@@ -85,19 +94,36 @@ public class ServiceManager {
 
     private final static class ServiceImplementation {
         private final Class<?> type;
-        private final Class<?> service;
+        private int appliedConstraints;
 
-        private ServiceImplementation (Class<?> service, Class<?> type) {
+        private ServiceImplementation (Class<?> type) {
             this.type = type;
-            this.service = service;
         }
 
-        public Class<?> getService() {
-            return service;
+        public int getAppliedConstraints() {
+            return appliedConstraints;
+        }
+
+        public void setAppliedConstraints(int appliedConstraints) {
+            this.appliedConstraints = appliedConstraints;
         }
 
         public Class<?> getType() {
             return type;
+        }
+    }
+
+    private static final class ServiceImplementationComparator implements Comparator<ServiceImplementation> {
+
+        @Override
+        public int compare(ServiceImplementation o1, ServiceImplementation o2) {
+            if (o1.getAppliedConstraints() < o2.getAppliedConstraints()) {
+                return -1;
+            } else if (o1.getAppliedConstraints() > o2.getAppliedConstraints()) {
+                return 1;
+            } else {
+                return 0;
+            }
         }
     }
 }
