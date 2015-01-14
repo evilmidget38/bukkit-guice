@@ -9,13 +9,12 @@ import com.evilmidget38.bukkitguice.services.PluginService;
 import com.evilmidget38.bukkitguice.services.ServiceManager;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import java.lang.annotation.Annotation;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class BukkitGuice {
@@ -39,22 +38,25 @@ public class BukkitGuice {
     }
 
     @SuppressWarnings("unchecked")
-    public void start(Module...modules) {
+    public void start(Module...modules) throws InitializationFailedException {
         PluginModule pluginModule = new PluginModule(plugin, serviceManager);
         Module[] completeModules = new Module[modules.length+1];
         System.arraycopy(modules, 0, completeModules, 0, modules.length);
         completeModules[modules.length] = pluginModule;
 
-        Injector injector = Guice.createInjector(completeModules);
-
-        // We need to instantiate the classes we discovered.
-        for (Class<?> clazz : pluginModule.getDiscovered()) {
-            Object object = injector.getInstance(clazz);
-            for (ObjectInitializer initializer : initializers) {
-                if (initializer.getType().isAssignableFrom(clazz)) {
-                    initializer.initialize(plugin, object);
+        try {
+            Injector injector = Guice.createInjector(completeModules);
+            serviceManager.validateServices(plugin.getLogger());
+            for (Class<?> clazz : pluginModule.getDiscovered()) {
+                Object object = injector.getInstance(clazz);
+                for (ObjectInitializer initializer : initializers) {
+                    if (initializer.getType().isAssignableFrom(clazz)) {
+                        initializer.initialize(plugin, object);
+                    }
                 }
             }
+        } catch (Exception e) {
+            throw new InitializationFailedException(e);
         }
     }
 

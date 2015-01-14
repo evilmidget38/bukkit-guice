@@ -65,10 +65,8 @@ public class PluginModule extends AbstractModule {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        services.validateServices(plugin.getLogger());
 
         for (Map.Entry<Class<?>, Class<?>> entry : services.getBindings().entrySet()) {
-            plugin.getLogger().info("Binding " + entry.getKey().getSimpleName() + " to " + entry.getValue().getSimpleName());
             dynamicBind(entry.getKey()).to(entry.getValue());
         }
     }

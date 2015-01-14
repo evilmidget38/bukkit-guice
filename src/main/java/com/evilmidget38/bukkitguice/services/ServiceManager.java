@@ -73,8 +73,10 @@ public class ServiceManager {
         System.out.println(services);
         Map<Class<?>, Class<?>> bindings = Maps.newHashMap();
         for (Map.Entry<Class<?>, ServiceImplementations> entry : services.entrySet()) {
-            ServiceImplementation implementation = ImmutableSortedSet.copyOf(new ServiceImplementationComparator(), entry.getValue().getValidImplementations()).first();
-            bindings.put(entry.getKey(), implementation.getType());
+            ImmutableSortedSet<ServiceImplementation> sortedSet = ImmutableSortedSet.copyOf(new ServiceImplementationComparator(), entry.getValue().getValidImplementations());
+            if (sortedSet.size() > 0) {
+                bindings.put(entry.getKey(), sortedSet.first().getType());
+            }
         }
         return bindings;
     }

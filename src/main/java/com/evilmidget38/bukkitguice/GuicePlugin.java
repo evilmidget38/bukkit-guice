@@ -1,10 +1,6 @@
 package com.evilmidget38.bukkitguice;
 
-import com.evilmidget38.bukkitguice.command.CommandInitializer;
-import com.google.common.collect.ImmutableList;
-import com.google.inject.Module;
-
-import java.util.List;
+import java.util.logging.Level;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -15,7 +11,13 @@ public class GuicePlugin extends JavaPlugin {
     public final void onEnable() {
         BukkitGuice guice = new BukkitGuice(this);
         configure(guice);
-        guice.start();
+        try {
+            guice.start();
+        } catch (InitializationFailedException e) {
+            getLogger().log(Level.SEVERE, "Failed to start " + getDescription().getName(), e);
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         start();
     }
 
