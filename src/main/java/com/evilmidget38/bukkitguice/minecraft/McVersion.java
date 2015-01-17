@@ -1,4 +1,4 @@
-package com.evilmidget38.bukkitguice;
+package com.evilmidget38.bukkitguice.minecraft;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

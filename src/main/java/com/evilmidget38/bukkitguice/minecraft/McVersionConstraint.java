@@ -1,4 +1,4 @@
-package com.evilmidget38.bukkitguice;
+package com.evilmidget38.bukkitguice.minecraft;
 
 import com.evilmidget38.bukkitguice.services.Constraint;
 import org.bukkit.Bukkit;

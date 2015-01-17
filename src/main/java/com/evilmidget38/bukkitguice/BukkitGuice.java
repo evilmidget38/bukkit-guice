@@ -1,15 +1,12 @@
 package com.evilmidget38.bukkitguice;
 
-import com.evilmidget38.bukkitguice.command.CommandHandler;
 import com.evilmidget38.bukkitguice.command.CommandInitializer;
 import com.evilmidget38.bukkitguice.listener.ListenerInitializer;
-import com.evilmidget38.bukkitguice.scanning.ClassHandler;
+import com.evilmidget38.bukkitguice.minecraft.McVersion;
+import com.evilmidget38.bukkitguice.minecraft.McVersionConstraint;
 import com.evilmidget38.bukkitguice.services.Constraint;
-import com.evilmidget38.bukkitguice.services.PluginService;
 import com.evilmidget38.bukkitguice.services.ServiceManager;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.inject.ConfigurationException;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
