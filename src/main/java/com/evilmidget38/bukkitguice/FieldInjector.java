@@ -1,14 +1,13 @@
-package com.evilmidget38.bukkitguice.config;
+package com.evilmidget38.bukkitguice;
 
 import com.google.inject.MembersInjector;
 import java.lang.reflect.Field;
-import org.bukkit.configuration.file.FileConfiguration;
 
-public class ConfigInjector<T> implements MembersInjector<T> {
+public class FieldInjector<T> implements MembersInjector<T> {
     private final Field field;
-    private final FileConfiguration toInject;
+    private final Object toInject;
 
-    public ConfigInjector(Field field, FileConfiguration toInject) {
+    public FieldInjector(Field field, Object toInject) {
         this.field = field;
         this.toInject = toInject;
     }

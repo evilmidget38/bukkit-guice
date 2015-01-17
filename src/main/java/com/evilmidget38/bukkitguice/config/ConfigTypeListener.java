@@ -1,5 +1,6 @@
 package com.evilmidget38.bukkitguice.config;
 
+import com.evilmidget38.bukkitguice.FieldInjector;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
@@ -24,7 +25,7 @@ public class ConfigTypeListener implements TypeListener {
                 if (field.getType() == FileConfiguration.class) {
                     Config annotation = field.getAnnotation(Config.class);
                     if (annotation != null) {
-                        encounter.register(new ConfigInjector<I>(field, manager.get(annotation.value(), annotation.copyNewValues())));
+                        encounter.register(new FieldInjector<I>(field, manager.get(annotation.value(), annotation.copyNewValues())));
                     }
                 }
             }
