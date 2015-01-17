@@ -1,4 +1,4 @@
-package com.evilmidget38.bukkitguice;
+package com.evilmidget38.bukkitguice.injectors;
 
 import com.google.inject.MembersInjector;
 import java.lang.reflect.Field;

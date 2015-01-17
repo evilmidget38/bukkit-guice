@@ -4,6 +4,8 @@ import com.evilmidget38.bukkitguice.command.CommandInitializer;
 import com.evilmidget38.bukkitguice.listener.ListenerInitializer;
 import com.evilmidget38.bukkitguice.minecraft.McVersion;
 import com.evilmidget38.bukkitguice.minecraft.McVersionConstraint;
+import com.evilmidget38.bukkitguice.plugin.PluginVersion;
+import com.evilmidget38.bukkitguice.plugin.PluginVersionConstraint;
 import com.evilmidget38.bukkitguice.services.Constraint;
 import com.evilmidget38.bukkitguice.services.ServiceManager;
 import com.google.common.collect.Lists;
@@ -24,6 +26,7 @@ public class BukkitGuice {
         this.plugin = plugin;
         this.initializers = Lists.<ObjectInitializer>newArrayList(new CommandInitializer(), new ListenerInitializer());
         addConstraint(McVersion.class, new McVersionConstraint());
+        addConstraint(PluginVersion.class, new PluginVersionConstraint());
     }
 
     public <T extends Annotation> void addConstraint(Class<T> clazz, Constraint<T> constraint) {

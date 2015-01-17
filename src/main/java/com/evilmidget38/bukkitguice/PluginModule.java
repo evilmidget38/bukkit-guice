@@ -1,12 +1,12 @@
 package com.evilmidget38.bukkitguice;
 
 import com.evilmidget38.bukkitguice.command.CommandHandler;
-import com.evilmidget38.bukkitguice.config.ConfigTypeListener;
+import com.evilmidget38.bukkitguice.config.ConfigProcessor;
 import com.evilmidget38.bukkitguice.listener.ListenerHandler;
+import com.evilmidget38.bukkitguice.plugin.PluginProcessor;
 import com.evilmidget38.bukkitguice.scanning.JarScanner;
 import com.evilmidget38.bukkitguice.services.PluginServiceHandler;
 import com.evilmidget38.bukkitguice.services.ServiceManager;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.AbstractModule;
 import com.google.inject.binder.AnnotatedBindingBuilder;
@@ -48,7 +48,8 @@ public class PluginModule extends AbstractModule {
         dynamicBind(plugin.getClass()).toInstance(plugin);
 
         // Add @Config support
-        bindListener(Matchers.any(), new ConfigTypeListener(plugin));
+        bindListener(Matchers.any(), new ConfigProcessor(plugin));
+        bindListener(Matchers.any(), new PluginProcessor());
         // Class discovery
         JarScanner scanner = null;
         try {

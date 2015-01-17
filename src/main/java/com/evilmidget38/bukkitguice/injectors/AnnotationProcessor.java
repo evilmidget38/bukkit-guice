@@ -1,20 +1,17 @@
-package com.evilmidget38.bukkitguice.config;
+package com.evilmidget38.bukkitguice.injectors;
 
-import com.evilmidget38.bukkitguice.FieldInjector;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public class ConfigTypeListener implements TypeListener {
-    private final JavaPlugin plugin;
-    private final ConfigManager manager;
+public abstract class AnnotationProcessor<ANNOTATION extends Annotation> implements TypeListener {
+    private final Class<ANNOTATION> annotation;
 
-    public ConfigTypeListener(JavaPlugin plugin) {
-        this.plugin = plugin;
-        this.manager = new ConfigManager(plugin);
+    protected AnnotationProcessor(Class<ANNOTATION> annotation) {
+        this.annotation = annotation;
     }
 
     @Override
@@ -23,13 +20,15 @@ public class ConfigTypeListener implements TypeListener {
         while (type != null) {
             for (Field field : type.getDeclaredFields()) {
                 if (field.getType() == FileConfiguration.class) {
-                    Config annotation = field.getAnnotation(Config.class);
+                    ANNOTATION annotation = field.getAnnotation(this.annotation);
                     if (annotation != null) {
-                        encounter.register(new FieldInjector<I>(field, manager.get(annotation.value(), annotation.copyNewValues())));
+                        encounter.register(new FieldInjector<I>(field, get(annotation)));
                     }
                 }
             }
             type = type.getSuperclass();
         }
     }
+
+    public abstract Object get(ANNOTATION annotation);
 }
