@@ -1,20 +1,21 @@
 package com.evilmidget38.bukkitguice.listener;
 
-import com.evilmidget38.bukkitguice.PluginModule;
 import com.evilmidget38.bukkitguice.scanning.ClassHandlerAdapter;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import java.util.Set;
 import org.bukkit.event.Listener;
 
 public class ListenerHandler extends ClassHandlerAdapter {
-    private final PluginModule module;
 
-    public ListenerHandler(PluginModule module) {
-        this.module = module;
-    }
+    @Inject
+    @Named("discovered")
+    private Set<Class<?>> discovered;
 
     @Override
     public void handle(Class<?> clazz) {
         if (Listener.class.isAssignableFrom(clazz)) {
-            module.getDiscovered().add(clazz);
+            discovered.add(clazz);
         }
     }
 }

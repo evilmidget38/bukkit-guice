@@ -1,13 +1,15 @@
 package com.evilmidget38.bukkitguice.injectors;
 
 import com.google.inject.TypeLiteral;
+import com.google.inject.matcher.Matcher;
+import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import org.bukkit.configuration.file.FileConfiguration;
 
-public abstract class AnnotationProcessor<ANNOTATION extends Annotation> implements TypeListener {
+public abstract class AnnotationProcessor<ANNOTATION extends Annotation> implements TypeListenerBinding {
     private final Class<ANNOTATION> annotation;
 
     protected AnnotationProcessor(Class<ANNOTATION> annotation) {
@@ -28,6 +30,10 @@ public abstract class AnnotationProcessor<ANNOTATION extends Annotation> impleme
             }
             type = type.getSuperclass();
         }
+    }
+
+    public Matcher<?> getMatcher() {
+        return Matchers.any();
     }
 
     public abstract Object get(ANNOTATION annotation);

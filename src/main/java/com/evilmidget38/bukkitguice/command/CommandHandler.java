@@ -1,22 +1,22 @@
 package com.evilmidget38.bukkitguice.command;
 
-import com.evilmidget38.bukkitguice.PluginModule;
 import com.evilmidget38.bukkitguice.scanning.ClassHandlerAdapter;
-import com.evilmidget38.bukkitguice.services.PluginService;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import java.util.Set;
 import org.bukkit.command.CommandExecutor;
 
 public class CommandHandler  extends ClassHandlerAdapter {
-    private final PluginModule pluginModule;
 
-    public CommandHandler(PluginModule pluginModule) {
-        this.pluginModule = pluginModule;
-    }
+    @Inject
+    @Named("discovered")
+    private Set<Class<?>> discovered;
 
     @Override
     public void handle(Class<?> clazz) {
         Command command = clazz.getAnnotation(Command.class);
         if (CommandExecutor.class.isAssignableFrom(clazz) && command != null) {
-            pluginModule.getDiscovered().add(clazz);
+            discovered.add(clazz);
         }
     }
 }
